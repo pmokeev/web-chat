@@ -19,7 +19,9 @@ func (authRouter *AuthRouter) InitAuthRouter() *gin.Engine {
 
 	auth := router.Group("/api/auth")
 	{
-		auth.GET("/hello", authRouter.authController.Hello)
+		auth.POST("/sign-up", authRouter.authController.SignUp)
+		auth.POST("/sign-in", authRouter.authController.SignIn)
+		auth.POST("/logout", authRouter.authController.Logout)
 	}
 
 	return router

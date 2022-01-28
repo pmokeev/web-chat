@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/signal"
 	server "pmokeev/web-chat/internal"
+	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/routers"
 	"pmokeev/web-chat/internal/services"
 	"pmokeev/web-chat/internal/storage"
@@ -19,12 +20,26 @@ func initConfigFile() error {
 	return viper.ReadInConfig()
 }
 
+func initDBConfigFile() models.DBConfig {
+	return models.DBConfig{
+		DBHost:     viper.GetString("db.host"),
+		DBUser:     viper.GetString("db.user"),
+		DBPassword: viper.GetString("db.password"),
+		DBName:     viper.GetString("db.dbname"),
+		DBPort:     viper.GetString("db.port"),
+		SSLMode:    viper.GetString("db.sslmode"),
+	}
+}
+
 func main() {
 	if err := initConfigFile(); err != nil {
 		log.Fatalf("Error while init config %s", err.Error())
 	}
 
 	authStorage := storage.NewAuthStorage()
+	if err := authStorage.InitDBConnection(initDBConfigFile()); err != nil {
+		log.Fatalf("Error while connecting to database %s", err.Error())
+	}
 	authService := services.NewAuthService(authStorage)
 	router := routers.NewAuthRouter(authService)
 	authServer := server.NewServer()
