@@ -19,6 +19,11 @@ func HashPassword(password string) (string, error) {
 	return string(hashPassword), err
 }
 
+func CompareHashPasswords(correctPassword, requestPassword string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(correctPassword), []byte(requestPassword))
+	return err
+}
+
 func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
 	hashPassword, err := HashPassword(registerForm.PasswordHash)
 	if err != nil {
@@ -29,4 +34,13 @@ func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
 	err = authService.authStorage.AddNewUser(registerForm)
 
 	return err
+}
+
+func (authService *AuthService) SignIn(loginForm models.LoginForm) error {
+	correctPassword, err := authService.authStorage.GetUserPassword(loginForm)
+	if err != nil {
+		return err
+	}
+
+	return CompareHashPasswords(correctPassword, loginForm.Password)
 }

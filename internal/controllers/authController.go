@@ -33,6 +33,20 @@ func (authController *AuthController) SignUp(context *gin.Context) {
 }
 
 func (authController *AuthController) SignIn(context *gin.Context) {
+	var loginForm models.LoginForm
+	if err := context.BindJSON(&loginForm); err != nil {
+		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	if err := authController.authService.SignIn(loginForm); err != nil {
+		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	context.JSON(http.StatusOK, map[string]string{
+		"login": "correct",
+	})
 }
 
 func (authController *AuthController) Logout(context *gin.Context) {

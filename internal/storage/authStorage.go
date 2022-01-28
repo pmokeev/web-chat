@@ -41,3 +41,13 @@ func (authStorage *AuthStorage) AddNewUser(registerForm models.RegisterForm) err
 	result := authStorage.dbConnection.Create(&registerForm)
 	return result.Error
 }
+
+func (authStorage *AuthStorage) GetUserPassword(loginForm models.LoginForm) (string, error) {
+	var registerForm models.RegisterForm
+	result := authStorage.dbConnection.Table("register_forms").Find(&registerForm, "email = ?", loginForm.Email)
+	if result.Error != nil {
+		return "", result.Error
+	}
+
+	return registerForm.PasswordHash, nil
+}
