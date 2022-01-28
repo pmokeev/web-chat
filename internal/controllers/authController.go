@@ -39,11 +39,13 @@ func (authController *AuthController) SignIn(context *gin.Context) {
 		return
 	}
 
-	if err := authController.authService.SignIn(loginForm); err != nil {
+	token, err := authController.authService.SignIn(loginForm)
+	if err != nil {
 		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
 
+	context.SetCookie("jwt", token, 3600, "/", "localhost", false, true)
 	context.JSON(http.StatusOK, map[string]string{
 		"login": "correct",
 	})

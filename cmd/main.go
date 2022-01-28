@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 	"log"
 	"os"
@@ -34,6 +35,10 @@ func initDBConfigFile() models.DBConfig {
 func main() {
 	if err := initConfigFile(); err != nil {
 		log.Fatalf("Error while init config %s", err.Error())
+	}
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error loading env variables: %s", err.Error())
 	}
 
 	authStorage := storage.NewAuthStorage()

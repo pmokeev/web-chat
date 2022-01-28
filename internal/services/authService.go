@@ -2,9 +2,14 @@ package services
 
 import (
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/dgrijalva/jwt-go.v3"
 	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/storage"
+	"strconv"
+	"time"
 )
+
+const SecretKey string = "secret"
 
 type AuthService struct {
 	authStorage *storage.AuthStorage
@@ -36,11 +41,22 @@ func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
 	return err
 }
 
-func (authService *AuthService) SignIn(loginForm models.LoginForm) error {
-	correctPassword, err := authService.authStorage.GetUserPassword(loginForm)
+func (authService *AuthService) SignIn(loginForm models.LoginForm) (string, error) {
+	user, err := authService.authStorage.GetUserPassword(loginForm)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return CompareHashPasswords(correctPassword, loginForm.Password)
+	err = CompareHashPasswords(user.PasswordHash, loginForm.Password)
+	if err != nil {
+		return "", err
+	}
+
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
+		Issuer:    strconv.Itoa(user.ID),
+		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	token, err := claims.SignedString([]byte(SecretKey))
+	return token, err
 }
