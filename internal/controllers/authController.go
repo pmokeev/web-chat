@@ -52,4 +52,8 @@ func (authController *AuthController) SignIn(context *gin.Context) {
 }
 
 func (authController *AuthController) Logout(context *gin.Context) {
+	context.SetCookie("jwt", "", -1, "/", "localhost", false, true)
+	context.JSON(http.StatusOK, map[string]string{
+		"logout": "correct",
+	})
 }
