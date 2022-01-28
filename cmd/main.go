@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	server "pmokeev/web-chat/internal"
 	"pmokeev/web-chat/internal/routers"
 	"pmokeev/web-chat/internal/services"
 	"pmokeev/web-chat/internal/storage"
@@ -26,7 +27,7 @@ func main() {
 	authStorage := storage.NewAuthStorage()
 	authService := services.NewAuthService(authStorage)
 	router := routers.NewAuthRouter(authService)
-	authServer := new(Server)
+	authServer := server.NewServer()
 
 	go func() {
 		if err := authServer.Run(viper.GetString("authPort"), router.InitAuthRouter()); err != nil {

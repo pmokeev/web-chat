@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -8,6 +8,10 @@ import (
 
 type Server struct {
 	httpServer *http.Server
+}
+
+func NewServer() *Server {
+	return &Server{}
 }
 
 func (server *Server) Run(port string, handler http.Handler) error {
