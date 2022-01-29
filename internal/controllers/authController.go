@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"gopkg.in/dgrijalva/jwt-go.v3"
 	"net/http"
-	"os"
 	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/services"
 )
@@ -30,10 +29,7 @@ func (authController *AuthController) JWTVerify(context *gin.Context) {
 	}
 
 	JWTTokenString := cookie.Value
-
-	decodedToken, err := jwt.ParseWithClaims(JWTTokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWTSecretKey")), nil
-	})
+	isValid, err := authController.authService.JWTVerify(JWTTokenString)
 
 	if err != nil {
 		if err == jwt.ErrSignatureInvalid {
@@ -43,8 +39,7 @@ func (authController *AuthController) JWTVerify(context *gin.Context) {
 		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
 		return
 	}
-
-	if !decodedToken.Valid {
+	if !isValid {
 		context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
 		return
 	}

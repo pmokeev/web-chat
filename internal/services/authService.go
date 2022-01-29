@@ -59,3 +59,11 @@ func (authService *AuthService) SignIn(loginForm models.LoginForm) (string, erro
 	token, err := claims.SignedString([]byte(os.Getenv("JWTSecretKey")))
 	return token, err
 }
+
+func (authService *AuthService) JWTVerify(JWTTokenString string) (bool, error) {
+	decodedToken, err := jwt.ParseWithClaims(JWTTokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWTSecretKey")), nil
+	})
+
+	return decodedToken.Valid, err
+}

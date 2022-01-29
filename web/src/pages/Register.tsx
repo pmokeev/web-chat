@@ -1,7 +1,7 @@
 import React, {SyntheticEvent, useState} from 'react';
 import {Redirect} from "react-router-dom";
 
-const Register = () => {
+const Register = (props: { isJWTCorrect: boolean }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

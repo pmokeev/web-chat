@@ -31,12 +31,12 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Navigation/>
+        <Navigation isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>
 
         <main className="form-signin">
           <Route exact path="/" component={() => <Home isJWTCorrect={isJWTCorrect}/>}/>
-          <Route path="/login" component={Login}/>
-          <Route path="/register" component={Register}/>
+          <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect}/>}/>
+          <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
         </main>
       </BrowserRouter>
     </div>
