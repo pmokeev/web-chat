@@ -5,6 +5,7 @@ import Navigation from "./components/Navigation";
 import {BrowserRouter, Route} from "react-router-dom";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import Profile from "./pages/Profile";
 
 function App() {
   const [isJWTCorrect, setIsJWTCorrect] = useState(false);
@@ -37,6 +38,7 @@ function App() {
           <Route exact path="/" component={() => <Home isJWTCorrect={isJWTCorrect}/>}/>
           <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>}/>
           <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
+          <Route path="/profile" component={() => <Profile isJWTCorrect={isJWTCorrect}/>}/>
         </main>
       </BrowserRouter>
     </div>

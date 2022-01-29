@@ -51,3 +51,9 @@ func (authStorage *AuthStorage) GetUserPassword(loginForm models.LoginForm) (mod
 
 	return registerForm, nil
 }
+
+func (authStorage *AuthStorage) ChangeUserPassword(changePasswordForm models.ChangePassword) error {
+	result := authStorage.dbConnection.Table("register_forms").Where("email = ?", changePasswordForm.Email).Update("password_hash", changePasswordForm.NewPassword)
+
+	return result.Error
+}

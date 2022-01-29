@@ -28,3 +28,8 @@
 .ErrorMsg {
   color: #ff0000;
 }
+
+.helloMsg {
+  text-align: center;
+  color: navy;
+}

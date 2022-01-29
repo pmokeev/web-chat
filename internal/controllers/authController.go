@@ -103,3 +103,52 @@ func (authController *AuthController) Logout(context *gin.Context) {
 		"logout": "correct",
 	})
 }
+
+func (authController *AuthController) GetProfile(context *gin.Context) {
+	cookie, err := context.Request.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	JWTTokenString := cookie.Value
+	userProfile, err, isValid := authController.authService.GetUserInformation(JWTTokenString)
+
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if !isValid {
+		context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	context.JSON(http.StatusOK, userProfile)
+}
+
+func (authController *AuthController) ChangePassword(context *gin.Context) {
+	var changePasswordForm models.ChangePassword
+	if err := context.BindJSON(&changePasswordForm); err != nil {
+		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	err := authController.authService.ChangeUserPassword(changePasswordForm)
+	if err != nil {
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	context.JSON(http.StatusOK, map[string]string{
+		"changed": "correct",
+	})
+}

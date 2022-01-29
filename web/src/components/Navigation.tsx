@@ -21,6 +21,9 @@ const Navigation = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorre
           <Link to="#" className="nav-link">Chat</Link>
         </li>
         <li className="nav-item active">
+          <Link to="/profile" className="nav-link">Profile</Link>
+        </li>
+        <li className="nav-item active">
           <Link to="/login" className="nav-link" onClick={logout}>Logout</Link>
         </li>
       </ul>
