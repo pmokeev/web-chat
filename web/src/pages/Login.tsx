@@ -1,7 +1,8 @@
 import React, {SyntheticEvent, useState} from 'react';
 import {Redirect} from "react-router-dom";
+import Home from "./Home";
 
-const Login = (props: { isJWTCorrect: boolean }) => {
+const Login = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorrect: boolean) => void }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [statusCode, setStatusCode] = useState(0);
@@ -20,13 +21,10 @@ const Login = (props: { isJWTCorrect: boolean }) => {
     });
 
     setStatusCode(response.status);
+    props.setIsJWTCorrect(true);
   }
 
-  if (props.isJWTCorrect) {
-    return <Redirect to="/"/>
-  }
-
-  if (statusCode === 200) {
+  if (props.isJWTCorrect || statusCode === 200) {
     return <Redirect to="/"/>
   }
 

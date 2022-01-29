@@ -33,7 +33,7 @@ const Register = (props: { isJWTCorrect: boolean }) => {
 
   return (
     <form onSubmit={submit}>
-      {statusCode === 409 ? <h5 className="ErrorMsg">Error, this email may already exist</h5> : ""}
+      {statusCode === 409 ? <h5 className="ErrorMsg">Error, this email already exist</h5> : ""}
       <h1 className="h3 mb-3 fw-normal">Please sign up</h1>
       <div className="form-floating">
         <input type="name" className="form-control" id="floatingInput" placeholder="name"

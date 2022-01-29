@@ -35,7 +35,7 @@ function App() {
 
         <main className="form-signin">
           <Route exact path="/" component={() => <Home isJWTCorrect={isJWTCorrect}/>}/>
-          <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect}/>}/>
+          <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>}/>
           <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
         </main>
       </BrowserRouter>
