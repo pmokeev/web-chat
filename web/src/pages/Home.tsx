@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Home = () => {
+const Home = (props: { isJWTCorrect: boolean }) => {
   return (
     <div>
-      Hello World!
+      {props.isJWTCorrect ? 'Hi!' : 'You are not logged in'}
     </div>
   );
 };

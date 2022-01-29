@@ -3,13 +3,12 @@ package services
 import (
 	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/dgrijalva/jwt-go.v3"
+	"os"
 	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/storage"
 	"strconv"
 	"time"
 )
-
-const SecretKey string = "secret"
 
 type AuthService struct {
 	authStorage *storage.AuthStorage
@@ -57,6 +56,6 @@ func (authService *AuthService) SignIn(loginForm models.LoginForm) (string, erro
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	token, err := claims.SignedString([]byte(SecretKey))
+	token, err := claims.SignedString([]byte(os.Getenv("JWTSecretKey")))
 	return token, err
 }

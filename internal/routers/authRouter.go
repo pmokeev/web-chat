@@ -36,6 +36,7 @@ func (authRouter *AuthRouter) InitAuthRouter() *gin.Engine {
 		auth.POST("/sign-up", authRouter.authController.SignUp)
 		auth.POST("/sign-in", authRouter.authController.SignIn)
 		auth.POST("/logout", authRouter.authController.Logout)
+		auth.GET("/jwtverify", authRouter.authController.JWTVerify)
 	}
 
 	return router
