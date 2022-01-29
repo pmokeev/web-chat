@@ -45,7 +45,7 @@ func (authController *AuthController) SignIn(context *gin.Context) {
 		return
 	}
 
-	context.SetCookie("jwt", token, 3600, "/", "localhost", false, true)
+	context.SetCookie("jwt", token, 60*60*24, "/", "localhost", false, true)
 	context.JSON(http.StatusOK, map[string]string{
 		"login": "correct",
 	})

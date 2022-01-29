@@ -20,15 +20,15 @@ func (authRouter *AuthRouter) InitAuthRouter() *gin.Engine {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://localhost:5000"},
-		AllowMethods:     []string{"POST", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"PUT", "GET"},
+		AllowHeaders:     []string{"Content-Type", "Content-Length", "Accept-Encoding", "X-CSRF-Token", "Authorization", "accept", "origin", "Cache-Control", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://localhost:5000"
+			return origin == "http://localhost:3000"
 		},
-		MaxAge: 24 * time.Hour,
+		MaxAge: 12 * time.Hour,
 	}))
 
 	auth := router.Group("/api/auth")
