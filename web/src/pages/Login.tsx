@@ -4,12 +4,12 @@ import {Redirect} from "react-router-dom";
 const Login = (props: { isJWTCorrect: boolean }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [redirect, setRedirect] = useState(false);
+  const [statusCode, setStatusCode] = useState(0);
 
   const submit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
-    await fetch('http://localhost:8000/api/auth/sign-in', {
+    const response = await fetch('http://localhost:8000/api/auth/sign-in', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       credentials: 'include',
@@ -19,15 +19,20 @@ const Login = (props: { isJWTCorrect: boolean }) => {
       })
     });
 
-    setRedirect(true);
+    setStatusCode(response.status);
   }
 
-  if (redirect) {
+  if (props.isJWTCorrect) {
+    return <Redirect to="/"/>
+  }
+
+  if (statusCode === 200) {
     return <Redirect to="/"/>
   }
 
   return (
     <form onSubmit={submit}>
+      {statusCode === 409 ? <h5 className="ErrorMsg">Incorrect email/password</h5> : ""}
       <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
       <div className="form-floating">
         <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com"

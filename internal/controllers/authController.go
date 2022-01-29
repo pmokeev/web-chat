@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/dgrijalva/jwt-go.v3"
 	"net/http"
 	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/services"
+	"regexp"
 )
 
 type AuthController struct {
@@ -57,6 +60,11 @@ func (authController *AuthController) SignUp(context *gin.Context) {
 	}
 
 	if err := authController.authService.SignUP(registerForm); err != nil {
+		duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
+		if duplicate.MatchString(err.Error()) {
+			context.AbortWithStatusJSON(http.StatusConflict, err.Error())
+			return
+		}
 		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -75,6 +83,10 @@ func (authController *AuthController) SignIn(context *gin.Context) {
 
 	token, err := authController.authService.SignIn(loginForm)
 	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			context.AbortWithStatusJSON(http.StatusConflict, err.Error())
+			return
+		}
 		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}

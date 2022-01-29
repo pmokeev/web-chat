@@ -5,12 +5,12 @@ const Register = (props: { isJWTCorrect: boolean }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [redirect, setRedirect] = useState(false);
+  const [statusCode, setStatusCode] = useState(0);
 
   const submit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
-    await fetch('http://localhost:8000/api/auth/sign-up', {
+    const response = await fetch('http://localhost:8000/api/auth/sign-up', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -20,15 +20,20 @@ const Register = (props: { isJWTCorrect: boolean }) => {
       })
     });
 
-    setRedirect(true);
+    setStatusCode(response.status);
   }
 
-  if (redirect) {
+  if (props.isJWTCorrect) {
+    return <Redirect to="/"/>
+  }
+
+  if (statusCode === 200) {
     return <Redirect to="/login"/>
   }
 
   return (
     <form onSubmit={submit}>
+      {statusCode === 409 ? <h5 className="ErrorMsg">Error, this email may already exist</h5> : ""}
       <h1 className="h3 mb-3 fw-normal">Please sign up</h1>
       <div className="form-floating">
         <input type="name" className="form-control" id="floatingInput" placeholder="name"
