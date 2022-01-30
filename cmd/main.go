@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"os/signal"
@@ -32,25 +35,48 @@ func initDBConfigFile() models.DBConfig {
 	}
 }
 
+func InitDBConnection(config models.DBConfig) (*gorm.DB, error) {
+	connectionString := fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		config.DBHost,
+		config.DBPort,
+		config.DBUser,
+		config.DBPassword,
+		config.DBName,
+		config.SSLMode,
+	)
+	dbConnection, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return dbConnection, err
+}
+
 func main() {
 	if err := initConfigFile(); err != nil {
 		log.Fatalf("Error while init config %s", err.Error())
 	}
-
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("error loading env variables: %s", err.Error())
 	}
 
-	authStorage := storage.NewAuthStorage()
-	if err := authStorage.InitDBConnection(initDBConfigFile()); err != nil {
+	dbConnection, err := InitDBConnection(initDBConfigFile())
+	if err != nil {
 		log.Fatalf("Error while connecting to database %s", err.Error())
 	}
-	authService := services.NewAuthService(authStorage)
-	router := routers.NewAuthRouter(authService)
+
+	storage := storage.NewStorage(dbConnection)
+	err = storage.AuthorizationStorage.MigrateTable()
+	if err != nil {
+		log.Fatalf("Error while migrating database %s", err.Error())
+	}
+	service := services.NewService(storage)
+	authRouter := routers.NewAuthRouter(service)
 	authServer := server.NewServer()
 
 	go func() {
-		if err := authServer.Run(viper.GetString("authPort"), router.InitAuthRouter()); err != nil {
+		if err := authServer.Run(viper.GetString("authPort"), authRouter.InitAuthRouter()); err != nil {
 			log.Fatalf("Error while running server %s", err.Error())
 		}
 	}()

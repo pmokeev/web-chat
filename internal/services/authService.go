@@ -2,7 +2,6 @@ package services
 
 import (
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"gopkg.in/dgrijalva/jwt-go.v3"
 	"os"
 	"pmokeev/web-chat/internal/models"
@@ -12,21 +11,11 @@ import (
 )
 
 type AuthService struct {
-	authStorage *storage.AuthStorage
+	authStorage storage.AuthorizationStorage
 }
 
-func NewAuthService(authStorage *storage.AuthStorage) *AuthService {
+func NewAuthService(authStorage storage.AuthorizationStorage) *AuthService {
 	return &AuthService{authStorage: authStorage}
-}
-
-func HashPassword(password string) (string, error) {
-	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(hashPassword), err
-}
-
-func CompareHashPasswords(correctPassword, requestPassword string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(correctPassword), []byte(requestPassword))
-	return err
 }
 
 func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
@@ -36,13 +25,13 @@ func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
 	}
 
 	registerForm.PasswordHash = hashPassword
-	err = authService.authStorage.AddNewUser(registerForm)
+	err = authService.authStorage.CreateUser(registerForm)
 
 	return err
 }
 
 func (authService *AuthService) SignIn(loginForm models.LoginForm) (string, error) {
-	user, err := authService.authStorage.GetUserPassword(loginForm)
+	user, err := authService.authStorage.GetUser(loginForm)
 	if err != nil {
 		return "", err
 	}
@@ -95,7 +84,7 @@ func (authService *AuthService) GetUserInformation(JWTTokenString string) (map[s
 
 func (authService *AuthService) ChangeUserPassword(changePasswordForm models.ChangePassword) error {
 	loginForm := models.LoginForm{Email: changePasswordForm.Email, Password: changePasswordForm.OldPassword}
-	user, err := authService.authStorage.GetUserPassword(loginForm)
+	user, err := authService.authStorage.GetUser(loginForm)
 	if err != nil {
 		return err
 	}

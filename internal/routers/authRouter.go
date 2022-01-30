@@ -9,11 +9,11 @@ import (
 )
 
 type AuthRouter struct {
-	authController *controllers.AuthController
+	controller *controllers.Controller
 }
 
-func NewAuthRouter(authService *services.AuthService) *AuthRouter {
-	return &AuthRouter{authController: controllers.NewAuthController(authService)}
+func NewAuthRouter(service *services.Service) *AuthRouter {
+	return &AuthRouter{controller: controllers.NewController(service)}
 }
 
 func (authRouter *AuthRouter) InitAuthRouter() *gin.Engine {
@@ -33,12 +33,12 @@ func (authRouter *AuthRouter) InitAuthRouter() *gin.Engine {
 
 	auth := router.Group("/api/auth")
 	{
-		auth.POST("/sign-up", authRouter.authController.SignUp)
-		auth.POST("/sign-in", authRouter.authController.SignIn)
-		auth.POST("/logout", authRouter.authController.Logout)
-		auth.GET("/jwtverify", authRouter.authController.JWTVerify)
-		auth.GET("/profile", authRouter.authController.GetProfile)
-		auth.POST("/change-password", authRouter.authController.ChangePassword)
+		auth.POST("/sign-up", authRouter.controller.SignUp)
+		auth.POST("/sign-in", authRouter.controller.SignIn)
+		auth.POST("/logout", authRouter.controller.Logout)
+		auth.GET("/jwtverify", authRouter.controller.JWTVerify)
+		auth.GET("/profile", authRouter.controller.GetProfile)
+		auth.POST("/change-password", authRouter.controller.ChangePassword)
 	}
 
 	return router

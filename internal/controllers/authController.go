@@ -12,44 +12,11 @@ import (
 )
 
 type AuthController struct {
-	authService *services.AuthService
+	authService services.AuthorizationService
 }
 
-func NewAuthController(authService *services.AuthService) *AuthController {
+func NewAuthController(authService services.AuthorizationService) *AuthController {
 	return &AuthController{authService: authService}
-}
-
-func (authController *AuthController) JWTVerify(context *gin.Context) {
-	cookie, err := context.Request.Cookie("jwt")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
-			return
-		}
-
-		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
-		return
-	}
-
-	JWTTokenString := cookie.Value
-	isValid, err := authController.authService.JWTVerify(JWTTokenString)
-
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
-			return
-		}
-		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
-		return
-	}
-	if !isValid {
-		context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	context.JSON(http.StatusOK, map[string]string{
-		"verify": "ok",
-	})
 }
 
 func (authController *AuthController) SignUp(context *gin.Context) {
@@ -133,6 +100,39 @@ func (authController *AuthController) GetProfile(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, userProfile)
+}
+
+func (authController *AuthController) JWTVerify(context *gin.Context) {
+	cookie, err := context.Request.Cookie("jwt")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	JWTTokenString := cookie.Value
+	isValid, err := authController.authService.JWTVerify(JWTTokenString)
+
+	if err != nil {
+		if err == jwt.ErrSignatureInvalid {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+			return
+		}
+		context.AbortWithStatusJSON(http.StatusBadRequest, err.Error())
+		return
+	}
+	if !isValid {
+		context.AbortWithStatusJSON(http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	context.JSON(http.StatusOK, map[string]string{
+		"verify": "ok",
+	})
 }
 
 func (authController *AuthController) ChangePassword(context *gin.Context) {
