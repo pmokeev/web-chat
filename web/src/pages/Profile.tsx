@@ -43,7 +43,7 @@ const Profile = (props: { isJWTCorrect: boolean }) => {
     });
 
     setSubmitStatusCode(response.status)
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 400) {
       setIsHidden(true);
     }
   }
@@ -70,18 +70,20 @@ const Profile = (props: { isJWTCorrect: boolean }) => {
         <button className="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
       </form>
     )
-  } else {
+  } else if (submitStatusCode === 200) {
     formSubmit = (
-      <div>
-        {submitStatusCode === 200 ? <div className="helloMsg">Password has been successfully changed </div> : ""}
-      </div>
+      <div className="helloMsg">Password has been successfully changed </div>
+    )
+  } else if (submitStatusCode === 400) {
+    formSubmit = (
+      <div className="ErrorMsg">Incorrect old password</div>
     )
   }
 
   return (
     <div>
       <div className="helloMsg">
-        Hello {name}! Your email - {email}.
+        Hello {name}! Your email - {email}
       </div>
 
       <button className="w-100 btn btn-lg btn-primary" onClick={() => setIsHidden(false)}>Change password</button>
