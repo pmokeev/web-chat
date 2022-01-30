@@ -1,0 +1,7 @@
+authPort: "8000"
+
+db:
+  host: "localhost"
+  port: "5432"
+  dbname: "webchat"
+  sslmode: "disable"
