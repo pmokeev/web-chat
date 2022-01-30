@@ -18,7 +18,7 @@ func NewAuthService(authStorage storage.AuthorizationStorage) *AuthService {
 	return &AuthService{authStorage: authStorage}
 }
 
-func (authService *AuthService) SignUP(registerForm models.RegisterForm) error {
+func (authService *AuthService) SignUp(registerForm models.RegisterForm) error {
 	hashPassword, err := HashPassword(registerForm.PasswordHash)
 	if err != nil {
 		return err

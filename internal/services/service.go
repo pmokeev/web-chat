@@ -6,7 +6,7 @@ import (
 )
 
 type AuthorizationService interface {
-	SignUP(registerForm models.RegisterForm) error
+	SignUp(registerForm models.RegisterForm) error
 	SignIn(loginForm models.LoginForm) (string, error)
 	JWTVerify(JWTTokenString string) (bool, error)
 	GetUserInformation(JWTTokenString string) (map[string]string, error, bool)
@@ -18,5 +18,6 @@ type Service struct {
 }
 
 func NewService(storage *storage.Storage) *Service {
-	return &Service{AuthorizationService: NewAuthService(storage.AuthorizationStorage)}
+	return &Service{
+		AuthorizationService: NewAuthService(storage.AuthorizationStorage)}
 }

@@ -22,29 +22,34 @@ func NewAuthController(authService services.AuthorizationService) *AuthControlle
 func (authController *AuthController) SignUp(context *gin.Context) {
 	var registerForm models.RegisterForm
 	if err := context.BindJSON(&registerForm); err != nil {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
+			"error": "invalid input body",
+		})
 		return
 	}
 
-	if err := authController.authService.SignUP(registerForm); err != nil {
+	if err := authController.authService.SignUp(registerForm); err != nil {
 		duplicate := regexp.MustCompile(`\(SQLSTATE 23505\)$`)
 		if duplicate.MatchString(err.Error()) {
 			context.AbortWithStatusJSON(http.StatusConflict, err.Error())
 			return
 		}
-		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		context.AbortWithStatusJSON(http.StatusInternalServerError, map[string]string{
+			"error": "internal error",
+		})
 		return
 	}
 
 	context.JSON(http.StatusOK, map[string]string{
-		"register": "ok",
+		"message": "correct",
 	})
 }
 
 func (authController *AuthController) SignIn(context *gin.Context) {
 	var loginForm models.LoginForm
 	if err := context.BindJSON(&loginForm); err != nil {
-		context.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
+		context.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{
+			"error": "invalid input body"})
 		return
 	}
 
@@ -60,7 +65,7 @@ func (authController *AuthController) SignIn(context *gin.Context) {
 
 	context.SetCookie("jwt", token, 60*60*24, "/", "localhost", false, true)
 	context.JSON(http.StatusOK, map[string]string{
-		"login": "correct",
+		"message": "correct",
 	})
 }
 

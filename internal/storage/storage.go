@@ -17,5 +17,6 @@ type Storage struct {
 }
 
 func NewStorage(dbConnection *gorm.DB) *Storage {
-	return &Storage{AuthorizationStorage: NewAuthStorage(dbConnection)}
+	return &Storage{
+		AuthorizationStorage: NewAuthStorage(dbConnection)}
 }

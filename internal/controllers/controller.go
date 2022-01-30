@@ -19,5 +19,6 @@ type Controller struct {
 }
 
 func NewController(service *services.Service) *Controller {
-	return &Controller{AuthorizationController: NewAuthController(service.AuthorizationService)}
+	return &Controller{
+		AuthorizationController: NewAuthController(service.AuthorizationService)}
 }
