@@ -44,7 +44,7 @@ func (authStorage *AuthStorage) AddNewUser(registerForm models.RegisterForm) err
 
 func (authStorage *AuthStorage) GetUserPassword(loginForm models.LoginForm) (models.RegisterForm, error) {
 	var registerForm models.RegisterForm
-	result := authStorage.dbConnection.Table("register_forms").Find(&registerForm, "email = ?", loginForm.Email)
+	result := authStorage.dbConnection.Table("users").Find(&registerForm, "email = ?", loginForm.Email)
 	if result.Error != nil {
 		return models.RegisterForm{}, result.Error
 	}
@@ -53,7 +53,7 @@ func (authStorage *AuthStorage) GetUserPassword(loginForm models.LoginForm) (mod
 }
 
 func (authStorage *AuthStorage) ChangeUserPassword(changePasswordForm models.ChangePassword) error {
-	result := authStorage.dbConnection.Table("register_forms").Where("email = ?", changePasswordForm.Email).Update("password_hash", changePasswordForm.NewPassword)
+	result := authStorage.dbConnection.Table("users").Where("email = ?", changePasswordForm.Email).Update("password_hash", changePasswordForm.NewPassword)
 
 	return result.Error
 }

@@ -6,3 +6,7 @@ type RegisterForm struct {
 	Email        string `json:"email" binding:"required" gorm:"type:varchar(100);unique;not null"`
 	PasswordHash string `json:"password" binding:"required" gorm:"type:varchar(100);not null"`
 }
+
+func (RegisterForm) TableName() string {
+	return "users"
+}

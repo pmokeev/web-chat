@@ -24,8 +24,8 @@ func initConfigFile() error {
 func initDBConfigFile() models.DBConfig {
 	return models.DBConfig{
 		DBHost:     viper.GetString("db.host"),
-		DBUser:     viper.GetString("db.user"),
-		DBPassword: viper.GetString("db.password"),
+		DBUser:     os.Getenv("POSTGRES_USER"),
+		DBPassword: os.Getenv("POSTGRES_PASSWORD"),
 		DBName:     viper.GetString("db.dbname"),
 		DBPort:     viper.GetString("db.port"),
 		SSLMode:    viper.GetString("db.sslmode"),
