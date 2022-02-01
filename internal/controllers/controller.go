@@ -14,11 +14,17 @@ type AuthorizationController interface {
 	ChangePassword(context *gin.Context)
 }
 
+type ChattingController interface {
+	ChatHandler(context *gin.Context)
+}
+
 type Controller struct {
 	AuthorizationController
+	ChattingController
 }
 
 func NewController(service *services.Service) *Controller {
 	return &Controller{
-		AuthorizationController: NewAuthController(service.AuthorizationService)}
+		AuthorizationController: NewAuthController(service.AuthorizationService),
+		ChattingController:      NewChatController(service.ChattingService)}
 }
