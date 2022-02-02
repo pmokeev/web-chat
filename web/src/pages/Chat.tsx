@@ -3,6 +3,7 @@ import Message from "../components/Message";
 import Status from "../components/Status";
 import './pages-styles/chat.css';
 import Messages from "../components/Messages";
+import InputText from "../components/InputText";
 
 const webSocketURL = 'ws://localhost:8001/api/chat';
 let webSocket: WebSocket = new WebSocket('ws://placeholder'); // TODO: fix in future
@@ -27,10 +28,12 @@ const Chat = () => {
     }
 
     ws.onmessage = (message) => {
-      //console.log('Websocket message: ', {message})
-      let msgParsed = JSON.parse(message.data);
-      messages.push(new Message(msgParsed.id, msgParsed.sender, msgParsed.body));
-      console.log(messages);
+      console.log('Websocket message: ', {message})
+
+      var tempMessages = messages;
+      var msgParsed = JSON.parse(message.data);
+      tempMessages.push(new Message(msgParsed.id, msgParsed.sender, msgParsed.body));
+      setMessages(tempMessages);
     }
 
     ws.onerror = (error) => {
@@ -55,12 +58,17 @@ const Chat = () => {
       {
         connect ?
           <div className="chat-inputs">
-            <input
+            <InputText
+              type={"text"}
+              placeholder={"Write message"}
+              onChange={value => setMessage(value)}
+              defaultValue={message} />
+            {/*<input
               type="text"
               placeholder={'Write message'}
               onChange={value => setMessage(value.target.value)}
               defaultValue={message}
-            />
+            />*/}
           </div> :
           <div />
       }
