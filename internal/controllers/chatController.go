@@ -31,7 +31,4 @@ func (chatController *ChatController) ChatHandler(context *gin.Context) {
 	}
 
 	chatController.chatService.AddUser("username", connection)
-	context.JSON(http.StatusOK, map[string]string{
-		"chat": "connected",
-	})
 }

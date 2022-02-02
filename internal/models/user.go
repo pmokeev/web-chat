@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/websocket"
 	"log"
+	"regexp"
 )
 
 type User struct {
@@ -21,6 +22,10 @@ func NewUser(username string, connection *websocket.Conn, global *Chat) *User {
 func (user *User) Read() {
 	for {
 		if _, message, err := user.Connection.ReadMessage(); err != nil {
+			duplicate := regexp.MustCompile(`^(.*?(\bclose 1005\b)[^$]*)$`)
+			if duplicate.MatchString(err.Error()) {
+				break
+			}
 			log.Println("Error on read message:", err.Error())
 			break
 		} else {
