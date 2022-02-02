@@ -1,6 +1,5 @@
 import React, {SyntheticEvent, useState} from 'react';
 import {Redirect} from "react-router-dom";
-import Home from "./Home";
 
 const Login = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorrect: boolean) => void }) => {
   const [email, setEmail] = useState('');

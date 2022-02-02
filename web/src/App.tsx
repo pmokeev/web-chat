@@ -6,6 +6,7 @@ import {BrowserRouter, Route} from "react-router-dom";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 
 function App() {
   const [isJWTCorrect, setIsJWTCorrect] = useState(false);
@@ -40,6 +41,7 @@ function App() {
           <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
           <Route path="/profile" component={() => <Profile isJWTCorrect={isJWTCorrect}/>}/>
         </main>
+        <Route path="/chat" component={Chat}/>
       </BrowserRouter>
     </div>
   );

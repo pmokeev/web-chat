@@ -10,6 +10,18 @@ class Message {
     this.sender = sender;
     this.body = body;
   }
+
+  toJSON() {
+    return {
+      id: this.id,
+      sender: this.sender,
+      body: this.body,
+    }
+  }
+
+  public toString = () : string => {
+    return "Id";
+  }
 }
 
 export default Message;

@@ -18,7 +18,7 @@ const Navigation = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorre
     menu = (
       <ul className="navbar-nav me-auto mb-2 mb-md-0">
         <li className="nav-item active">
-          <Link to="#" className="nav-link">Chat</Link>
+          <Link to="/chat" className="nav-link">Chat</Link>
         </li>
         <li className="nav-item active">
           <Link to="/profile" className="nav-link">Profile</Link>

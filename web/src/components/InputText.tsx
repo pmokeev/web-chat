@@ -11,4 +11,4 @@ const InputText = (props: { type: string, placeholder: string, onChange: (target
   )
 }
 
-export default InputText
+export default InputText;
