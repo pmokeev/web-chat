@@ -22,7 +22,7 @@ func NewUser(username string, connection *websocket.Conn, global *Chat) *User {
 func (user *User) Read() {
 	for {
 		if _, message, err := user.Connection.ReadMessage(); err != nil {
-			duplicate := regexp.MustCompile(`^(.*?(\bclose 1005\b)[^$]*)$`)
+			duplicate := regexp.MustCompile(`^(.*?(\bclose\b)[^$]*)$`)
 			if duplicate.MatchString(err.Error()) {
 				break
 			}

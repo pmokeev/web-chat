@@ -3,24 +3,14 @@ import Message from "../components/Message";
 import Status from "../components/Status";
 import './pages-styles/chat.css';
 import Messages from "../components/Messages";
-import InputText from "../components/InputText";
 
 const webSocketURL = 'ws://localhost:8001/api/chat';
+let webSocket: WebSocket = new WebSocket('ws://placeholder'); // TODO: fix in future
 
 const Chat = () => {
   const [connect, setConnect] = useState(false);
-  let webSocket: WebSocket = new WebSocket('ws://placeholder'); // TODO: fix in future
-  let messages: Message[] = [];
-  let message: string = '';
-  const username = "USER";
-
-  const setMessage = (value: string) => {
-    message = value;
-  }
-
-  const setMessages = (value: Message) => {
-    messages.push(value);
-  }
+  const [messages, setMessages] = useState(Array<Message>());
+  const [message, setMessage] = useState('');
 
   const enterChat = () => {
     let ws = new WebSocket(webSocketURL);
@@ -37,8 +27,10 @@ const Chat = () => {
     }
 
     ws.onmessage = (message) => {
-      console.log('Websocket message: ', {message})
-      setMessages(message.data);
+      //console.log('Websocket message: ', {message})
+      let msgParsed = JSON.parse(message.data);
+      messages.push(new Message(msgParsed.id, msgParsed.sender, msgParsed.body));
+      console.log(messages);
     }
 
     ws.onerror = (error) => {
@@ -58,14 +50,20 @@ const Chat = () => {
       <h1>WebChat</h1>
       <Status status={connect ? 'connected' : 'disconnected'} />
       {
-        connect && messages && <Messages messages={messages} />
+        connect && <Messages messages={messages} />
       }
-      <div className="chat-inputs">
-        <InputText type={'text'}
-                   placeholder={connect ? 'Write message' : 'Enter with your username'}
-                   onChange={value => connect ? setMessage(value) : username}
-                   defaultValue={connect ? message.toString() : username} />
-      </div>
+      {
+        connect ?
+          <div className="chat-inputs">
+            <input
+              type="text"
+              placeholder={'Write message'}
+              onChange={value => setMessage(value.target.value)}
+              defaultValue={message}
+            />
+          </div> :
+          <div />
+      }
       <button type="button" onClick={() => connect ? sendMessage() : enterChat()}>
         {connect ? 'Send' : 'Enter'}
       </button>
