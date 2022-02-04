@@ -7,7 +7,7 @@ class Navbar extends React.Component<IJWTInterface> {
     super(props);
   }
 
-  logout = async () => {
+  async logout() {
     await fetch('http://localhost:8000/api/auth/logout', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
