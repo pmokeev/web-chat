@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
 import Login from "./pages/Login";
-import Navigation from "./components/Navigation";
+import Navigation from "./Components/Navigation";
 import {BrowserRouter, Route} from "react-router-dom";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
@@ -19,13 +19,7 @@ function App() {
           credentials: 'include',
         });
 
-        const statusCode = response.status;
-
-        if (statusCode === 200) {
-          setIsJWTCorrect(true);
-        } else {
-          setIsJWTCorrect(false);
-        }
+        response.status === 200 ? setIsJWTCorrect(true) : setIsJWTCorrect(false);
       }
     )();
   });

@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
-import Message from "../components/Message";
-import Status from "../components/Status";
+import Message from "../Components/Message";
+import Status from "../Components/Status";
 import './pages-styles/chat.css';
-import Messages from "../components/Messages";
-import InputText from "../components/InputText";
+import Messages from "../Components/Messages";
+import InputText from "../Components/InputText";
 
 const webSocketURL = 'ws://localhost:8001/api/chat';
 let webSocket: WebSocket = new WebSocket('ws://placeholder'); // TODO: fix in future
@@ -30,10 +30,10 @@ const Chat = () => {
     ws.onmessage = (message) => {
       console.log('Websocket message: ', {message})
 
-      var tempMessages = messages;
-      var msgParsed = JSON.parse(message.data);
+      let tempMessages = messages;
+      let msgParsed = JSON.parse(message.data);
       tempMessages.push(new Message(msgParsed.id, msgParsed.sender, msgParsed.body));
-      setMessages(tempMessages);
+      setMessages([...messages]);
     }
 
     ws.onerror = (error) => {
@@ -63,12 +63,6 @@ const Chat = () => {
               placeholder={"Write message"}
               onChange={value => setMessage(value)}
               defaultValue={message} />
-            {/*<input
-              type="text"
-              placeholder={'Write message'}
-              onChange={value => setMessage(value.target.value)}
-              defaultValue={message}
-            />*/}
           </div> :
           <div />
       }
