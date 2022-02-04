@@ -1,5 +1,6 @@
 import React, {SyntheticEvent, useEffect, useState} from 'react';
 import {Redirect} from "react-router-dom";
+import './pages-styles/login-register.css';
 
 const Profile = (props: { isJWTCorrect: boolean }) => {
   let formSubmit;
@@ -22,7 +23,7 @@ const Profile = (props: { isJWTCorrect: boolean }) => {
         const content = response.json();
         content.then(data => {
           setName(data["name"]);
-          setEmail(data["email"])
+          setEmail(data["email"]);
         });
       }
     )();
@@ -81,7 +82,7 @@ const Profile = (props: { isJWTCorrect: boolean }) => {
   }
 
   return (
-    <div>
+    <div className="form-signin">
       <div className="helloMsg">
         Hello {name}! Your email - {email}
       </div>

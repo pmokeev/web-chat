@@ -1,5 +1,6 @@
 import React, {SyntheticEvent, useState} from 'react';
 import {Redirect} from "react-router-dom";
+import './pages-styles/login-register.css';
 
 const Login = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorrect: boolean) => void }) => {
   const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ const Login = (props: { isJWTCorrect: boolean, setIsJWTCorrect: (isJWTCorrect: b
   }
 
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} className="form-signin">
       {statusCode === 409 ? <h5 className="ErrorMsg">Incorrect email/password</h5> : ""}
       <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
       <div className="form-floating">

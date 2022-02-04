@@ -1,17 +1,35 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Message from "../Components/Message";
 import Status from "../Components/Status";
 import './pages-styles/chat.css';
 import Messages from "../Components/Messages";
 import InputText from "../Components/InputText";
+import {Redirect} from "react-router-dom";
 
 const webSocketURL = 'ws://localhost:8001/api/chat';
 let webSocket: WebSocket = new WebSocket('ws://placeholder'); // TODO: fix in future
 
-const Chat = () => {
+const Chat = (props: { isJWTCorrect: boolean }) => {
   const [connect, setConnect] = useState(false);
   const [messages, setMessages] = useState(Array<Message>());
   const [message, setMessage] = useState('');
+  const [username, setUsername] = useState('');
+
+  useEffect(() => {
+    (
+      async () => {
+        const response = await fetch('http://localhost:8000/api/auth/profile', {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        const content = response.json();
+        content.then(data => {
+          setUsername(data["name"]);
+        });
+      }
+    )();
+  });
 
   const enterChat = () => {
     let ws = new WebSocket(webSocketURL);
@@ -32,7 +50,7 @@ const Chat = () => {
 
       let tempMessages = messages;
       let msgParsed = JSON.parse(message.data);
-      tempMessages.push(new Message(msgParsed.id, msgParsed.sender, msgParsed.body));
+      tempMessages.push(new Message(msgParsed.id, username, msgParsed.body));
       setMessages([...messages]);
     }
 
@@ -46,6 +64,10 @@ const Chat = () => {
   const sendMessage = () => {
     webSocket.send(message);
     setMessage('');
+  }
+
+  if (!props.isJWTCorrect) {
+    return <Redirect to="/" />;
   }
 
   return (
