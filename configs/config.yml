@@ -1,4 +1,5 @@
 authPort: "8000"
+chatPort: "8001"
 
 db:
   host: "localhost"

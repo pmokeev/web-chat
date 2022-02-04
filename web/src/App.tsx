@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import './App.css';
 import Login from "./pages/Login";
-import Navigation from "./components/Navigation";
+import Navigation from "./Components/Navigation";
 import {BrowserRouter, Route} from "react-router-dom";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
 
 function App() {
   const [isJWTCorrect, setIsJWTCorrect] = useState(false);
@@ -18,13 +18,7 @@ function App() {
           credentials: 'include',
         });
 
-        const statusCode = response.status;
-
-        if (statusCode === 200) {
-          setIsJWTCorrect(true);
-        } else {
-          setIsJWTCorrect(false);
-        }
+        response.status === 200 ? setIsJWTCorrect(true) : setIsJWTCorrect(false);
       }
     )();
   });
@@ -34,12 +28,11 @@ function App() {
       <BrowserRouter>
         <Navigation isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>
 
-        <main className="form-signin">
-          <Route exact path="/" component={() => <Home isJWTCorrect={isJWTCorrect}/>}/>
-          <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>}/>
-          <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
-          <Route path="/profile" component={() => <Profile isJWTCorrect={isJWTCorrect}/>}/>
-        </main>
+        <Route exact path="/" component={() => <Home isJWTCorrect={isJWTCorrect}/>}/>
+        <Route path="/login" component={() => <Login isJWTCorrect={isJWTCorrect} setIsJWTCorrect={setIsJWTCorrect}/>}/>
+        <Route path="/register" component={() => <Register isJWTCorrect={isJWTCorrect}/>}/>
+        <Route path="/profile" component={() => <Profile isJWTCorrect={isJWTCorrect}/>}/>
+        <Route path="/chat" component={() => <Chat isJWTCorrect={isJWTCorrect} />}/>
       </BrowserRouter>
     </div>
   );

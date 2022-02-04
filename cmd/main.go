@@ -1,21 +1,19 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"os"
-	"os/signal"
 	server "pmokeev/web-chat/internal"
 	"pmokeev/web-chat/internal/models"
 	"pmokeev/web-chat/internal/routers"
 	"pmokeev/web-chat/internal/services"
 	"pmokeev/web-chat/internal/storage"
-	"syscall"
 )
 
 func initConfigFile() error {
@@ -53,6 +51,28 @@ func InitDBConnection(config models.DBConfig) (*gorm.DB, error) {
 	return dbConnection, err
 }
 
+func InitAuthServerConfiguration(storage *storage.Storage) *routers.AuthRouter {
+	err := storage.AuthorizationStorage.MigrateTable()
+	if err != nil {
+		log.Fatalf("Error while migrating database %s", err.Error())
+	}
+	service := services.NewService(storage)
+	authRouter := routers.NewAuthRouter(service)
+
+	return authRouter
+}
+
+func InitChatServerConfiguration(storage *storage.Storage) *routers.ChatRouter {
+	err := storage.AuthorizationStorage.MigrateTable()
+	if err != nil {
+		log.Fatalf("Error while migrating database %s", err.Error())
+	}
+	service := services.NewService(storage)
+	chatRouter := routers.NewChatRouter(service)
+
+	return chatRouter
+}
+
 func main() {
 	if err := initConfigFile(); err != nil {
 		log.Fatalf("Error while init config %s", err.Error())
@@ -66,31 +86,21 @@ func main() {
 		log.Fatalf("Error while connecting to database %s", err.Error())
 	}
 
-	storage := storage.NewStorage(dbConnection)
-	err = storage.AuthorizationStorage.MigrateTable()
-	if err != nil {
-		log.Fatalf("Error while migrating database %s", err.Error())
-	}
-	service := services.NewService(storage)
-	authRouter := routers.NewAuthRouter(service)
+	mainStorage := storage.NewStorage(dbConnection)
+	authRouter := InitAuthServerConfiguration(mainStorage)
+	chatRouter := InitChatServerConfiguration(mainStorage)
 	authServer := server.NewServer()
+	charServer := server.NewServer()
 
-	go func() {
-		if err := authServer.Run(viper.GetString("authPort"), authRouter.InitAuthRouter()); err != nil {
-			log.Fatalf("Error while running server %s", err.Error())
-		}
-	}()
+	var serverGroup errgroup.Group
+	serverGroup.Go(func() error {
+		return authServer.Run(viper.GetString("authPort"), authRouter.InitAuthRouter())
+	})
+	serverGroup.Go(func() error {
+		return charServer.Run(viper.GetString("chatPort"), chatRouter.InitChatRouter())
+	})
 
-	log.Print("API started")
-
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-
-	<-quit
-
-	log.Print("API shutdowned")
-
-	if err := authServer.Shutdown(context.Background()); err != nil {
-		log.Fatalf("Error while shutdowning server %s", err.Error())
+	if err := serverGroup.Wait(); err != nil {
+		log.Fatal(err)
 	}
 }
