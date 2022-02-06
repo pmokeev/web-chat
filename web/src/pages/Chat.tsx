@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import Message from "../Components/Message";
-import Status from "../Components/Status";
+import Message from "../components/Message";
+import Status from "../components/Status";
 import './pages-styles/chat.css';
-import Messages from "../Components/Messages";
-import InputText from "../Components/InputText";
+import Messages from "../components/Messages";
+import InputText from "../components/InputText";
 import {Redirect} from "react-router-dom";
 
 const webSocketURL = 'ws://localhost:8001/api/chat';

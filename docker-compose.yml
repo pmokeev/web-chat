@@ -11,7 +11,7 @@ services:
 
   chat-backend:
     build:
-      dockerfile: Dockerfile
+      dockerfile: ./docker/backend/Dockerfile
       context: .
     env_file: .env
     networks:
@@ -21,3 +21,15 @@ services:
     ports:
       - 8000:8000
       - 8001:8001
+      
+  chat-frontend:
+    build:
+      dockerfile: ./docker/frontend/Dockerfile
+      context: .
+    networks:
+      - default
+    ports:
+      - 3000:3000
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
