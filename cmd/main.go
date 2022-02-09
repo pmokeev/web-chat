@@ -27,7 +27,7 @@ func initDBConfigFile() models.DBConfig {
 		DBHost:     viper.GetString("db.host"),
 		DBUser:     os.Getenv("POSTGRES_USER"),
 		DBPassword: os.Getenv("POSTGRES_PASSWORD"),
-		DBName:     viper.GetString("db.dbname"),
+		DBName:     os.Getenv("POSTGRES_DB"),
 		DBPort:     viper.GetString("db.port"),
 		SSLMode:    viper.GetString("db.sslmode"),
 	}
