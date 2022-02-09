@@ -21,7 +21,7 @@ services:
     ports:
       - 8000:8000
       - 8001:8001
-      
+
   chat-frontend:
     build:
       dockerfile: ./docker/frontend/Dockerfile
@@ -33,3 +33,6 @@ services:
     volumes:
       - '.:/app'
       - '/app/node_modules'
+    command: npm start
+    tty: true
+    stdin_open: true
