@@ -6,9 +6,18 @@ This is a Golang & ReactJS chat application powered by WebSockets, which provide
 
 ![](https://i.ibb.co/RBkGfcF/1.jpg)
 ![](https://i.ibb.co/jvD55fS/2.jpg)
-![](https://i.ibb.co/Jj3VYNf/3.jpg)
+![](https://i.ibb.co/1z3KRb0/bz-Nw1-MWA5s4.jpg)
 
 ## Installation
+
+Create an .env file at the root of the project with the content:
+
+```environment
+JWTSecretKey=-//-
+POSTGRES_USER=-//-
+POSTGRES_PASSWORD=-//-
+POSTGRES_DB=-//-
+```
 
 The application is packaged in [docker](https://www.docker.com/) containers. You must also have docker-compose installed in order to run the application. Command to run the application:
 

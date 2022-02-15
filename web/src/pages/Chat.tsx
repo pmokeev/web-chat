@@ -50,7 +50,11 @@ const Chat = (props: { isJWTCorrect: boolean }) => {
 
       let tempMessages = messages;
       let msgParsed = JSON.parse(message.data);
-      tempMessages.push(new Message(msgParsed.id, username, msgParsed.body));
+      if (msgParsed.sender == "Server") {
+        tempMessages.push(new Message(msgParsed.id, "Server", msgParsed.body));
+      } else {
+        tempMessages.push(new Message(msgParsed.id, username, msgParsed.body));
+      }
       setMessages([...messages]);
     }
 

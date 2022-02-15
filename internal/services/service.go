@@ -17,6 +17,7 @@ type AuthorizationService interface {
 type ChattingService interface {
 	RunChat()
 	AddUser(username string, connection *websocket.Conn)
+	GetUsername(JWTTokenString string) (string, error, bool)
 	connectUser(user *models.User)
 	broadcastMessage(message *models.Message)
 	disconnectUser(user *models.User)

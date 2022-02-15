@@ -3,7 +3,9 @@ package services
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"gopkg.in/dgrijalva/jwt-go.v3"
 	"log"
+	"os"
 	"pmokeev/web-chat/internal/models"
 )
 
@@ -64,4 +66,18 @@ func (chatService *ChatService) disconnectUser(user *models.User) {
 		body := fmt.Sprintf("%s left the chat", user.Username)
 		chatService.broadcastMessage(models.NewMessage(body, "Server"))
 	}
+}
+
+func (chatService *ChatService) GetUsername(JWTTokenString string) (string, error, bool) {
+	token, err := jwt.Parse(JWTTokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("JWTSecretKey")), nil
+	})
+	if err != nil {
+		return "", err, false
+	}
+
+	claims := token.Claims.(jwt.MapClaims)
+	data := claims["data"].(map[string]interface{})
+
+	return fmt.Sprintf("%v", data["name"]), nil, true
 }
